@@ -5,13 +5,16 @@ import GithubContext from "../../context/github/GithubContext";
 function UserSearch() {
   const [text, setText] = useState("");
 
-  const { users } = useContext(GithubContext);
+  const { users, searchUsers, clearUsers } = useContext(GithubContext);
 
   const [state, dispath] = useReducer(githubReducer);
 
   const handleChange = (e) => {
     setText(e.target.value);
     // console.log(e.target.value);
+  };
+  const handleClear = () => {
+    console.log(users);
   };
 
   const handleSubmit = (e) => {
@@ -26,6 +29,8 @@ function UserSearch() {
       /**
        * @todo -search users
        */
+
+      searchUsers(text);
       setText("");
     }
   };
@@ -54,7 +59,9 @@ function UserSearch() {
       </div>
       {users.length > 0 && (
         <div>
-          <button className="btn btn-ghost btn-lg">Clear</button>
+          <button onClick={clearUsers} className="btn btn-ghost btn-lg">
+            Clear
+          </button>
         </div>
       )}
     </div>

@@ -10,23 +10,39 @@ export const GithubProvider = ({ children }) => {
   const initialstate = {
     users: [],
     loading: false,
+    error: "",
   };
   const [state, dispath] = useReducer(githubReducer, initialstate);
 
-  const fetchUsers = async () => {
-    setLoading();
-    const response = await fetch(`${Github_URL}/users`, {
-      headers: {
-        Authorization: `token ${Github_Token}`,
-      },
+  const searchUsers = async (name) => {
+    const params = new URLSearchParams({
+      q: name,
     });
-
-    const data = await response.json();
+    try {
+      setLoading();
+      const response = await fetch(`${Github_URL}/search/users?${params}`, {
+        headers: {
+          Authorization: `token ${Github_Token}`,
+        },
+      });
+      const { items } = await response.json();
+      dispath({
+        type: "GET_USERS",
+        payload: items,
+      });
+    } catch (error) {
+      dispath({
+        type: "SET_ERROR",
+        payload: error.message,
+      });
+    }
+  };
+  const clearUsers = () => {
     dispath({
-      type: "GET_USERS",
-      payload: data,
+      type: "CLEAR_USERS",
     });
   };
+
   const setLoading = () => {
     dispath({
       type: "SET_LOADING",
@@ -38,7 +54,8 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users,
         loading: state.loading,
-        fetchUsers,
+        searchUsers,
+        clearUsers,
       }}
     >
       {children}

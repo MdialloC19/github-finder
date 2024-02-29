@@ -11,7 +11,17 @@ const githubReducer = (state, action) => {
         ...state,
         loading: action.payload,
       };
-    // case "SET_ERROR":
+    case "CLEAR_USERS":
+      console.log("ok");
+      return {
+        ...state,
+        users: [],
+      };
+    case "SET_ERROR":
+      return {
+        ...state,
+        error: action.payload,
+      };
     default:
       return state;
   }
