@@ -9,6 +9,7 @@ const Github_Token = process.env.REACT_APP_GITHUB_TOKEN;
 export const GithubProvider = ({ children }) => {
   const initialstate = {
     users: [],
+    user: {},
     loading: false,
     error: "",
   };
@@ -18,6 +19,7 @@ export const GithubProvider = ({ children }) => {
     const params = new URLSearchParams({
       q: name,
     });
+
     try {
       setLoading();
       const response = await fetch(`${Github_URL}/search/users?${params}`, {
@@ -37,6 +39,32 @@ export const GithubProvider = ({ children }) => {
       });
     }
   };
+  // Get a single user
+  const getUser = async (login) => {
+    try {
+      setLoading();
+      const response = await fetch(`${Github_URL}/users/${login}`, {
+        headers: {
+          Authorization: `token ${Github_Token}`,
+        },
+      });
+
+      if (response.statusCode === 404) {
+        window.location = "/notfound";
+      } else {
+        const data = await response.json();
+        dispath({
+          type: "GET_USER",
+          payload: data,
+        });
+      }
+    } catch (error) {
+      dispath({
+        type: "SET_ERROR",
+        payload: error.message,
+      });
+    }
+  };
   const clearUsers = () => {
     dispath({
       type: "CLEAR_USERS",
@@ -49,12 +77,15 @@ export const GithubProvider = ({ children }) => {
       payload: true,
     });
   };
+
   return (
     <GithubContext.Provider
       value={{
         users: state.users,
         loading: state.loading,
+        user: state.user,
         searchUsers,
+        getUser,
         clearUsers,
       }}
     >

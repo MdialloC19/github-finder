@@ -6,12 +6,12 @@ const AlertContext = createContext();
 export const AlertProvider = ({ children }) => {
   const initialstate = null;
 
-  const [state, dispath] = useReducer(AlertReducer, initialstate);
+  const [state, dispatch] = useReducer(AlertReducer, initialstate);
 
-  const setAlert = (msg, alert) => {
-    dispath({
+  const setAlert = (msg, type) => {
+    dispatch({
       type: "SET_ALERT",
-      payload: { msg, alert },
+      payload: { msg, type },
     });
 
     setTimeout(() => dispatch({ type: "REMOVE_ALERT" }), 3000);

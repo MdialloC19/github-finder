@@ -1,26 +1,25 @@
 import { useState, useContext, useReducer } from "react";
 import githubReducer from "../../context/github/GithubReducer";
 import GithubContext from "../../context/github/GithubContext";
+import AlertContext from "../../context/alert/AlertContext";
 
 function UserSearch() {
   const [text, setText] = useState("");
 
   const { users, searchUsers, clearUsers } = useContext(GithubContext);
+  const { setAlert } = useContext(AlertContext);
 
   const [state, dispath] = useReducer(githubReducer);
 
   const handleChange = (e) => {
     setText(e.target.value);
-    // console.log(e.target.value);
-  };
-  const handleClear = () => {
-    console.log(users);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (text === "") {
-      alert("Please enter something");
+    const trimmedText = text.trim();
+    if (trimmedText === "") {
+      setAlert("Please enter a text", "error");
     } else {
       dispath({
         type: "SET_LOADING",
@@ -30,7 +29,7 @@ function UserSearch() {
        * @todo -search users
        */
 
-      searchUsers(text);
+      searchUsers(trimmedText);
       setText("");
     }
   };
