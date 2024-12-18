@@ -11,42 +11,44 @@ export const GithubProvider = ({ children }) => {
     users: [],
     user: {},
     loading: false,
-    error: "",
+    error: ""
   };
   const [state, dispath] = useReducer(githubReducer, initialstate);
 
-  const searchUsers = async (name) => {
+  const searchUsers = async name => {
     const params = new URLSearchParams({
-      q: name,
+      q: name
     });
 
     try {
       setLoading();
+
       const response = await fetch(`${Github_URL}/search/users?${params}`, {
         headers: {
-          Authorization: `token ${Github_Token}`,
-        },
+          Authorization: `token ${Github_Token}`
+        }
       });
+      // console.log(response);
       const { items } = await response.json();
       dispath({
         type: "GET_USERS",
-        payload: items,
+        payload: items
       });
     } catch (error) {
       dispath({
         type: "SET_ERROR",
-        payload: error.message,
+        payload: error.message
       });
     }
   };
   // Get a single user
-  const getUser = async (login) => {
+  const getUser = async login => {
     try {
       setLoading();
       const response = await fetch(`${Github_URL}/users/${login}`, {
         headers: {
-          Authorization: `token ${Github_Token}`,
-        },
+          Authorization: `token ${Github_Token}`
+        }
       });
 
       if (response.statusCode === 404) {
@@ -55,26 +57,26 @@ export const GithubProvider = ({ children }) => {
         const data = await response.json();
         dispath({
           type: "GET_USER",
-          payload: data,
+          payload: data
         });
       }
     } catch (error) {
       dispath({
         type: "SET_ERROR",
-        payload: error.message,
+        payload: error.message
       });
     }
   };
   const clearUsers = () => {
     dispath({
-      type: "CLEAR_USERS",
+      type: "CLEAR_USERS"
     });
   };
 
   const setLoading = () => {
     dispath({
       type: "SET_LOADING",
-      payload: true,
+      payload: true
     });
   };
 
@@ -86,7 +88,7 @@ export const GithubProvider = ({ children }) => {
         user: state.user,
         searchUsers,
         getUser,
-        clearUsers,
+        clearUsers
       }}
     >
       {children}
